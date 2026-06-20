@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import api from '../api/config';
 import { 
     Search, Receipt, User, Calendar, 
-    ChevronRight, Loader2, Printer, 
-    Eye, Filter, ArrowLeft 
+    ChevronRight, Loader2, Filter, ArrowLeft 
 } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +24,6 @@ const BillingHistory: React.FC = () => {
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
     const fetchInvoices = useCallback(async () => {
         setLoading(true);

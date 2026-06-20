@@ -23,6 +23,19 @@ interface CartContextType {
   getTotalItems: () => number;
 }
 
+interface ApiCartItem {
+  product?: {
+    _id: string;
+    name: string;
+    price: number;
+    image: string;
+    category: string;
+    rating?: number;
+    discount?: number;
+  };
+  qty: number;
+}
+
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -43,16 +56,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user) {
       api.get('/cart').then((res) => {
         if (res.data && res.data.items) {
-          const mappedItems: CartItem[] = res.data.items
-            .filter((item: any) => item.product) // Filter out null products
-            .map((item: any) => ({
-              id: item.product._id,
-              name: item.product.name,
-              price: item.product.price,
-              image: item.product.image,
-              category: item.product.category,
-              rating: item.product.rating,
-              discount: item.product.discount,
+          const mappedItems: CartItem[] = (res.data.items as ApiCartItem[])
+            .filter((item) => item.product)
+            .map((item) => ({
+              id: item.product!._id,
+              name: item.product!.name,
+              price: item.product!.price,
+              image: item.product!.image,
+              category: item.product!.category,
+              rating: item.product!.rating,
+              discount: item.product!.discount,
               quantity: item.qty
             }));
           setItems(mappedItems);

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import api from '../api/config';
 import { useToast } from '../contexts/ToastContext';
+import { AxiosError } from 'axios';
 
 interface OrderItem {
   product?: { _id?: string; id?: string; name?: string; image?: string };
@@ -49,8 +50,9 @@ const OrderHistory: React.FC = () => {
       const fetched = Array.isArray(response.data) ? response.data : [];
       setOrders(fetched);
       if (fetched.length > 0) localStorage.setItem('orders', JSON.stringify(fetched));
-    } catch (err: any) {
-      const msg = err.response?.data?.message || 'Failed to load orders';
+    } catch (err: unknown) {
+      const axiosError = err as AxiosError<{ message?: string }>;
+      const msg = axiosError.response?.data?.message || 'Failed to load orders';
       setError(msg);
       const cached = localStorage.getItem('orders');
       if (cached) {

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import api from '../api/config';
 import { 
     Search, Plus, Minus, Trash2, Receipt, 
-    User, Package, Calculator, CheckCircle2, 
-    X, Loader2, Printer, Save, AlertCircle
+    User, Package, CheckCircle2, 
+    X, Loader2, Printer
 } from 'lucide-react';
 import ReceiptTemplate from '../components/ReceiptTemplate';
 import { useToast } from '../contexts/ToastContext';
@@ -33,6 +33,18 @@ interface CartItem {
     stock: number;
 }
 
+interface InvoiceSuccess {
+    _id: string;
+    invoice_number: string;
+    customer_id?: Customer;
+    items: CartItem[];
+    subtotal: number;
+    tax_amount: number;
+    total_amount: number;
+    status: string;
+    date?: string;
+}
+
 const BillingPage: React.FC = () => {
     const { showToast } = useToast();
     
@@ -47,7 +59,7 @@ const BillingPage: React.FC = () => {
     const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
     const [cart, setCart] = useState<CartItem[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [invoiceSuccess, setInvoiceSuccess] = useState<any | null>(null);
+    const [invoiceSuccess, setInvoiceSuccess] = useState<InvoiceSuccess | null>(null);
     const [showReceipt, setShowReceipt] = useState(false);
 
     const fetchData = useCallback(async () => {

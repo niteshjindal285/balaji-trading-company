@@ -31,12 +31,14 @@ import CompaniesManagement from './pages/CompaniesManagement';
 import InventoryDashboard from './pages/InventoryDashboard';
 
 function App() {
+  const routerBasename = import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL;
+
   return (
     <ErrorBoundary>
       <AuthProvider>
         <CartProvider>
           <ToastProvider>
-            <Router basename="/Online-GroceryStore">
+            <Router basename={routerBasename}>
               <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
                 <Navbar />
                 <main className="pb-16">

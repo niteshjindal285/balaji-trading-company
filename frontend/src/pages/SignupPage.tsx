@@ -65,6 +65,7 @@ const SignupPage: React.FC = () => {
     { id: 'phone', label: 'Phone', icon: <Phone className="h-4 w-4 text-gray-400" />, type: 'tel', placeholder: '10-digit mobile no.', required: false },
     { id: 'address', label: 'Address', icon: <MapPin className="h-4 w-4 text-gray-400" />, type: 'text', placeholder: 'Your delivery address', required: false },
   ];
+  type SignupFieldId = typeof fields[number]['id'];
 
   return (
     <div className="min-h-screen flex">
@@ -160,7 +161,7 @@ const SignupPage: React.FC = () => {
                   <div className="relative">
                     <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
                     <input id={id} name={id} type={type} required={required}
-                      value={(formData as any)[id]} onChange={handleChange}
+                      value={formData[id as SignupFieldId]} onChange={handleChange}
                       className={`${inputBase} pl-10`} placeholder={placeholder} />
                   </div>
                 </div>

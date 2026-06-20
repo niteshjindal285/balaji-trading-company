@@ -123,14 +123,9 @@ const ContactPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {contactInfo.map((info, index) => {
-              const Card = info.href ? 'a' : 'div';
-              const cardProps = info.href ? { href: info.href, target: '_blank', rel: 'noreferrer' } : {};
-              return (
-                <Card
-                  key={index}
-                  {...(cardProps as any)}
-                  className={`group bg-white border border-gray-100 ${info.ring} ${info.bg} rounded-2xl p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-500 cursor-pointer`}
-                >
+              const cardClassName = `group bg-white border border-gray-100 ${info.ring} ${info.bg} rounded-2xl p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-500 cursor-pointer`;
+              const cardContent = (
+                <>
                   <div className={`bg-gradient-to-br ${info.gradient} shadow-lg ${info.glow} text-white w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-2xl group-hover:scale-110 transition-transform duration-500`}>
                     {info.icon}
                   </div>
@@ -141,7 +136,30 @@ const ContactPage: React.FC = () => {
                       <p key={idx} className="text-gray-500 text-sm">{detail}</p>
                     ))}
                   </div>
-                </Card>
+                </>
+              );
+
+              if (info.href) {
+                return (
+                  <a
+                    key={index}
+                    href={info.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={cardClassName}
+                  >
+                    {cardContent}
+                  </a>
+                );
+              }
+
+              return (
+                <div
+                  key={index}
+                  className={cardClassName}
+                >
+                  {cardContent}
+                </div>
               );
             })}
           </div>

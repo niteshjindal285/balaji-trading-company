@@ -13,6 +13,25 @@ import { useToast } from '../contexts/ToastContext';
 const inputClass =
   'w-full px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 hover:border-gray-300 transition-all duration-200 placeholder-gray-400';
 
+interface ApiOrder {
+  _id?: string;
+  id?: string;
+  shippingAddress?: { name?: string };
+  items?: unknown[];
+  totalPrice?: number;
+  status?: string;
+}
+
+interface RecentOrder {
+  id: string;
+  customer: string;
+  items: number;
+  total: number;
+  status: string;
+}
+
+type ProductFormData = Omit<Product, 'id'> & { id?: string };
+
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -29,7 +48,7 @@ const AdminDashboard: React.FC = () => {
 
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [statsData, setStatsData] = useState({
-    totalOrders: 0, activeUsers: 0, totalRevenue: 0, recentOrders: [] as any[]
+    totalOrders: 0, activeUsers: 0, totalRevenue: 0, recentOrders: [] as RecentOrder[]
   });
 
   const totalProducts = products.length;
@@ -89,9 +108,9 @@ const AdminDashboard: React.FC = () => {
       setIsLoadingStats(true);
       try {
         const ordersResponse = await api.get('/orders');
-        const orders = Array.isArray(ordersResponse.data) ? ordersResponse.data : [];
-        const revenue = orders.reduce((sum: number, o: any) => sum + (o.totalPrice || 0), 0);
-        const recentOrdersData = orders.slice(0, 5).map((o: any) => ({
+        const orders: ApiOrder[] = Array.isArray(ordersResponse.data) ? ordersResponse.data : [];
+        const revenue = orders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+        const recentOrdersData = orders.slice(0, 5).map((o) => ({
           id: o._id || o.id,
           customer: o.shippingAddress?.name || 'Customer',
           items: o.items?.length || 0,
@@ -134,7 +153,7 @@ const AdminDashboard: React.FC = () => {
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const product: any = {
+      const product: ProductFormData = {
         ...(editingId ? { id: editingId } : {}),
         name: newProduct.name, category: newProduct.category,
         price: newProduct.price, image: newProduct.image,

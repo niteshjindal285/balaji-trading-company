@@ -25,7 +25,7 @@ router.post('/register', async (req, res) => {
     const hashed = await bcrypt.hash(password, salt);
     user = new User({ name, email, password: hashed });
     await user.save();
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'your_jwt_secret_here', { expiresIn: '30d' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.isAdmin ? 'admin' : 'customer' } });
   } catch (err) {
     console.error("Register Error:", err);
@@ -41,7 +41,7 @@ router.post('/login', async (req, res) => {
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     const isMatch = await require('bcryptjs').compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'your_jwt_secret_here', { expiresIn: '30d' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.isAdmin ? 'admin' : 'customer' } });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

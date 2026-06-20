@@ -7,11 +7,37 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 10000; // 👈 Render's default port is 10000
+const PORT = process.env.PORT || 10000;
+const requiredEnv = ['MONGO_URI', 'JWT_SECRET'];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
 
-app.use(cors());
+if (missingEnv.length > 0) {
+  console.error(`Missing required environment variables: ${missingEnv.join(', ')}`);
+  process.exit(1);
+}
+
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
 // Routes
 app.use('/api/products', require('./routes/productRoutes'));
@@ -25,10 +51,19 @@ app.use('/api/suppliers', require('./routes/supplierRoutes'));
 app.use('/api/customers', require('./routes/customerRoutes'));
 app.use('/api/invoices', require('./routes/invoiceRoutes'));
 
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: 'Server error' });
+});
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
-    app.listen(PORT, '0.0.0.0', () => { // 👈 must bind to 0.0.0.0
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`Server running on port ${PORT}`);
     });
   })

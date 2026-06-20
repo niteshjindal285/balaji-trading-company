@@ -1,13 +1,15 @@
 import api from '../api/config';
 import { Product } from '../data/mockProducts';
 
+type ApiProduct = Omit<Product, 'id'> & { _id: string };
+
 // GET all products from the real MongoDB database
 export const getProducts = async (): Promise<Product[]> => {
     try {
         const response = await api.get('/products');
 
         // Map _id to id to match the frontend Product interface
-        return response.data.map((p: any) => ({
+        return (response.data as ApiProduct[]).map((p) => ({
             ...p,
             id: p._id
         }));

@@ -28,6 +28,7 @@ const UserProfile: React.FC = () => {
     { id: 'phone', label: 'Phone Number', icon: <Phone className="h-4 w-4 text-gray-400" />, type: 'tel' },
     { id: 'address', label: 'Delivery Address', icon: <MapPin className="h-4 w-4 text-gray-400" />, type: 'text' },
   ];
+  type ProfileFieldId = typeof fields[number]['id'];
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
@@ -90,7 +91,7 @@ const UserProfile: React.FC = () => {
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{label}</label>
                     <div className="relative">
                       <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
-                      <input type={type} name={id} value={(formData as any)[id]}
+                      <input type={type} name={id} value={formData[id as ProfileFieldId]}
                         onChange={handleChange} disabled={!isEditing}
                         className={`w-full pl-10 pr-4 py-2.5 border border-gray-200 text-gray-900 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all duration-200 ${isEditing ? 'bg-white' : 'bg-gray-50 text-gray-500 cursor-default'}`} />
                     </div>
